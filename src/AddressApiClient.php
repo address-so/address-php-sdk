@@ -173,10 +173,11 @@ class AddressApiClient
      * @param string $recipient
      * @param string $payment_password
      * @param string|null $odd_address
+     * @param string|null $token_label
      * @return array
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
-    public function sendFromWallet(int $wallet_id, float $amount, string $recipient, string $payment_password, string $odd_address = null): array
+    public function sendFromWallet(int $wallet_id, float $amount, string $recipient, string $payment_password, string $odd_address = null, string $token_label = null): array
     {
         $params = [
             'amount' => $amount,
@@ -187,6 +188,12 @@ class AddressApiClient
         if ($odd_address) {
             $params = array_merge($params, [
                 'odd_address' => $odd_address
+            ]);
+        }
+
+        if ($token_label) {
+            $params = array_merge($params, [
+                'token_label' => $token_label
             ]);
         }
 
@@ -287,6 +294,7 @@ class AddressApiClient
      * @param string $recipient
      * @param string $payment_password
      * @param string|null $odd_address
+     * @param string|null $token_label
      * @return array
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
