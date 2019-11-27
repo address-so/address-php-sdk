@@ -26,7 +26,7 @@ $secret_token = 'your_secret_token';
 $address = new \AddressSo\AddressApiClient($label, $api_key, $secret_token);
 ```
 
-### 4. Request sample
+## 4. Request sample
  
 Example of sending funds from wallet
  
