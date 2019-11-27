@@ -1,0 +1,17 @@
+{
+  "name": "address-so/address-php-sdk",
+  "description": "ADDRESS PHP SDK",
+  "keywords": ["address", "blockchain", "sdk"],
+  "type": "library",
+  "homepage": "https://github.com/address-so/address-php-sdk",
+  "license": "MIT",
+  "require": {
+    "php": ">=7.2",
+    "guzzlehttp/guzzle": "^6.3"
+  },
+  "autoload": {
+    "psr-4": {
+      "AddressSo\\": "src/"
+    }
+  }
+}
