@@ -39,7 +39,7 @@ $address = new \AddressSo\AddressApiClient($label, $api_key, $secret_token);
 
 $wallet_id = 1;
 $amount = 0.1;
-$recipient 'bitcoin_address';
+$recipient = 'bitcoin_address';
 $payment_password = 'your_payment_password';
 
 $address->sendFromWallet($wallet_id, $amount, $recipient, $payment_password);
