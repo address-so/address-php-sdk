@@ -23,7 +23,7 @@ $label = 'btc';
 $api_key = 'your_api_key';
 $secret_token = 'your_secret_token';
 
-$address = new AddressSo\AddressApiClient\AddressApiClient($label, $api_key, $secret_token);
+$address = new \AddressSo\AddressApiClient($label, $api_key, $secret_token);
 ```
 
 ### 4. Request sample
@@ -35,7 +35,7 @@ $label = 'btc';
 $api_key = 'your_api_key';
 $secret_token = 'your_secret_token';
 
-$address = new AddressSo\AddressApiClient\AddressApiClient($label, $api_key, $secret_token);
+$address = new \AddressSo\AddressApiClient($label, $api_key, $secret_token);
 
 $wallet_id = 1;
 $amount = 0.1;
