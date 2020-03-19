@@ -41,20 +41,28 @@ class AddressApiClient
     private $secret_token;
 
     /**
+     * @var int $timeout
+     */
+    private $timeout;
+
+    /**
      * AddressApiClient constructor
      *
      * @param string $coin
      * @param string $api_token
      * @param string $secret_token
+     * @param int $timeout
      */
-    public function __construct(string $coin, string $api_token, string $secret_token)
+    public function __construct(string $coin, string $api_token, string $secret_token, int $timeout = 2)
     {
         $this->coin = $coin;
         $this->api_token = $api_token;
         $this->secret_token = $secret_token;
+        $this->timeout = $timeout;
 
         $this->client = new Client([
-            'base_uri' => self::BASE_URI
+            'base_uri' => self::BASE_URI,
+            'timeout' => $this->timeout
         ]);
     }
 
