@@ -454,7 +454,10 @@ class AddressApiClient
      */
     private function signParams(array $params): string
     {
+        asort($params);
+
         $secret = hash('sha512', $this->secret_token);
+
         return hash_hmac('sha512', http_build_query($params), $secret);
     }
 }
