@@ -454,7 +454,7 @@ class AddressApiClient
      */
     private function signParams(array $params): string
     {
-        asort($params);
+        ksort($params);
 
         $secret = hash('sha512', $this->secret_token);
 
