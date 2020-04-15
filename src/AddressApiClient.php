@@ -4,6 +4,7 @@
 namespace AddressSo;
 
 use GuzzleHttp\Client;
+use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Exception\RequestException;
 
 class AddressApiClient
@@ -70,7 +71,7 @@ class AddressApiClient
      * Get all coins
      *
      * @return array
-     * @throws \GuzzleHttp\Exception\GuzzleException
+     * @throws GuzzleException
      */
     public function getCoins(): array
     {
@@ -81,7 +82,7 @@ class AddressApiClient
      * Get coin info by symbol
      *
      * @return array
-     * @throws \GuzzleHttp\Exception\GuzzleException
+     * @throws GuzzleException
      */
     public function getCoin(): array
     {
@@ -92,7 +93,7 @@ class AddressApiClient
      * Get all wallets
      *
      * @return array
-     * @throws \GuzzleHttp\Exception\GuzzleException
+     * @throws GuzzleException
      */
     public function getWallets(): array
     {
@@ -104,7 +105,7 @@ class AddressApiClient
      *
      * @param int $wallet_id
      * @return array
-     * @throws \GuzzleHttp\Exception\GuzzleException
+     * @throws GuzzleException
      */
     public function getWallet(int $wallet_id): array
     {
@@ -116,7 +117,7 @@ class AddressApiClient
      *
      * @param string $wallet_name
      * @return array
-     * @throws \GuzzleHttp\Exception\GuzzleException
+     * @throws GuzzleException
      */
     public function createWallet(string $wallet_name): array
     {
@@ -133,7 +134,7 @@ class AddressApiClient
      * @param int $wallet_id
      * @param string $wallet_name
      * @return array
-     * @throws \GuzzleHttp\Exception\GuzzleException
+     * @throws GuzzleException
      */
     public function updateWallet(int $wallet_id, string $wallet_name): array
     {
@@ -149,7 +150,7 @@ class AddressApiClient
      *
      * @param int $wallet_id
      * @return array
-     * @throws \GuzzleHttp\Exception\GuzzleException
+     * @throws GuzzleException
      */
     public function deleteWallet(int $wallet_id): array
     {
@@ -162,7 +163,7 @@ class AddressApiClient
      * @param int $wallet_id
      * @param int $limit
      * @return array
-     * @throws \GuzzleHttp\Exception\GuzzleException
+     * @throws GuzzleException
      */
     public function getWalletTransactions(int $wallet_id, int $limit = 100): array
     {
@@ -176,34 +177,32 @@ class AddressApiClient
     /**
      * Send funds from wallet
      *
+     * Example of allowed additional params:
+     *
+     * $additionalParams = [
+     *     'odd_address' => 'address',
+     *     'token_label' => 'erc20',
+     *     'fee_priority' => (1 - NORMAl, 2 - MEDIUM, 3 - HIGH),
+     *     'tag' => 39381 (for Ripple)
+     * ]
+     *
      * @param int $wallet_id
      * @param float $amount
      * @param string $recipient
      * @param string $payment_password
-     * @param string|null $odd_address
-     * @param string|null $token_label
+     * @param array $additionalParams
      * @return array
-     * @throws \GuzzleHttp\Exception\GuzzleException
+     * @throws GuzzleException
      */
-    public function sendFromWallet(int $wallet_id, float $amount, string $recipient, string $payment_password, string $odd_address = null, string $token_label = null): array
+    public function sendFromWallet(
+        int $wallet_id,
+        float $amount,
+        string $recipient,
+        string $payment_password,
+        array $additionalParams = []
+    ): array
     {
-        $params = [
-            'amount' => $amount,
-            'recipient' => $recipient,
-            'payment_password' => $payment_password
-        ];
-
-        if ($odd_address) {
-            $params = array_merge($params, [
-                'odd_address' => $odd_address
-            ]);
-        }
-
-        if ($token_label) {
-            $params = array_merge($params, [
-                'token_label' => $token_label
-            ]);
-        }
+        $params = $this->generateSendParams($amount, $recipient, $payment_password, $additionalParams);
 
         return $this->request('POST', $this->makeUrl('wallet', 'send', $wallet_id), $params, true);
     }
@@ -213,7 +212,7 @@ class AddressApiClient
      *
      * @param int $wallet_id
      * @return array
-     * @throws \GuzzleHttp\Exception\GuzzleException
+     * @throws GuzzleException
      */
     public function getAccounts(int $wallet_id): array
     {
@@ -226,7 +225,7 @@ class AddressApiClient
      * @param int $wallet_id
      * @param int $account_id
      * @return array
-     * @throws \GuzzleHttp\Exception\GuzzleException
+     * @throws GuzzleException
      */
     public function getAccount(int $wallet_id, int $account_id): array
     {
@@ -238,7 +237,7 @@ class AddressApiClient
      *
      * @param int $wallet_id
      * @return array
-     * @throws \GuzzleHttp\Exception\GuzzleException
+     * @throws GuzzleException
      */
     public function createAccount(int $wallet_id): array
     {
@@ -251,7 +250,7 @@ class AddressApiClient
      * @param int $wallet_id
      * @param int $account_id
      * @return array
-     * @throws \GuzzleHttp\Exception\GuzzleException
+     * @throws GuzzleException
      */
     public function deleteAccount(int $wallet_id, int $account_id): array
     {
@@ -264,7 +263,7 @@ class AddressApiClient
      * @param int $wallet_id
      * @param array $accounts
      * @return array
-     * @throws \GuzzleHttp\Exception\GuzzleException
+     * @throws GuzzleException
      */
     public function archiveAccounts(int $wallet_id, array $accounts): array
     {
@@ -282,7 +281,7 @@ class AddressApiClient
      * @param int $account_id
      * @param int $limit
      * @return array
-     * @throws \GuzzleHttp\Exception\GuzzleException
+     * @throws GuzzleException
      */
     public function getAccountTransactions(int $wallet_id, int $account_id, int $limit = 100): array
     {
@@ -296,35 +295,34 @@ class AddressApiClient
     /**
      * Send funds from account
      *
+     * Example of allowed additional params:
+     *
+     * $additionalParams = [
+     *     'odd_address' => 'address',
+     *     'token_label' => 'erc20',
+     *     'fee_priority' => (1 - NORMAl, 2 - MEDIUM, 3 - HIGH),
+     *     'tag' => 39381 (for Ripple)
+     * ]
+     *
      * @param int $wallet_id
      * @param int $account_id
      * @param float $amount
      * @param string $recipient
      * @param string $payment_password
-     * @param string|null $odd_address
-     * @param string|null $token_label
+     * @param array $additionalParams
      * @return array
-     * @throws \GuzzleHttp\Exception\GuzzleException
+     * @throws GuzzleException
      */
-    public function sendFromAccount(int $wallet_id, int $account_id, float $amount, string $recipient, string $payment_password, string $odd_address = null, string $token_label = null): array
+    public function sendFromAccount(
+        int $wallet_id,
+        int $account_id,
+        float $amount,
+        string $recipient,
+        string $payment_password,
+        array $additionalParams = []
+    ): array
     {
-        $params = [
-            'amount' => $amount,
-            'recipient' => $recipient,
-            'payment_password' => $payment_password
-        ];
-
-        if ($odd_address) {
-            $params = array_merge($params, [
-                'odd_address' => $odd_address
-            ]);
-        }
-
-        if ($token_label) {
-            $params = array_merge($params, [
-                'token_label' => $token_label
-            ]);
-        }
+        $params = $this->generateSendParams($amount, $recipient, $payment_password, $additionalParams);
 
         return $this->request('POST', $this->makeUrl('account', 'send', $wallet_id, $account_id), $params, true);
     }
@@ -337,7 +335,7 @@ class AddressApiClient
      * @param int $user_id
      * @param array $permissions
      * @return array
-     * @throws \GuzzleHttp\Exception\GuzzleException
+     * @throws GuzzleException
      */
     public function setPermissions(int $wallet_id, int $user_id, array $permissions = []): array
     {
@@ -355,7 +353,7 @@ class AddressApiClient
      * @param int $wallet_id
      * @param int $user_id
      * @return array
-     * @throws \GuzzleHttp\Exception\GuzzleException
+     * @throws GuzzleException
      */
     public function removeAllPermissions(int $wallet_id, int $user_id): array
     {
@@ -426,7 +424,7 @@ class AddressApiClient
      * @param array $params
      * @param bool $sign
      * @return array
-     * @throws \GuzzleHttp\Exception\GuzzleException
+     * @throws GuzzleException
      */
     private function request(string $method, string $url, array $params = [], bool $sign = false): array
     {
@@ -459,5 +457,42 @@ class AddressApiClient
         $secret = hash('sha512', $this->secret_token);
 
         return hash_hmac('sha512', http_build_query($params), $secret);
+    }
+
+    /**
+     * @param float $amount
+     * @param string $recipient
+     * @param string $paymentPassword
+     * @param array|null $additionalParams
+     * @return array
+     */
+    private function generateSendParams(
+        float $amount,
+        string $recipient,
+        string $paymentPassword,
+        ?array $additionalParams
+    ): array
+    {
+        $params = [
+            'amount' => $amount,
+            'recipient' => $recipient,
+            'payment_password' => $paymentPassword
+        ];
+
+        if ($additionalParams) {
+            $params = array_merge($params, $additionalParams);
+        }
+
+        $additionalParamsAllowed = [
+            'amount',
+            'recipient',
+            'payment_password',
+            'odd_address',
+            'token_label',
+            'fee_priority',
+            'tag'
+        ];
+
+        return array_intersect_key($params, array_flip($additionalParamsAllowed));
     }
 }
