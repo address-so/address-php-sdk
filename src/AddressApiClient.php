@@ -182,6 +182,25 @@ class AddressApiClient
     }
 
     /**
+     * Get all transactions
+     *
+     * @param int $wallet_id
+     * @param int $limit
+     * @param int|null $account_id
+     * @param int|null $tag
+     * @return array
+     * @throws GuzzleException
+     */
+    public function getTransactions(int $wallet_id, int $limit = 100, ?int $account_id = null, ?int $tag = null): array
+    {
+        if ($account_id) {
+            return $this->getAccountTransactions($wallet_id, $account_id, $limit);
+        } else {
+            return $this->getWalletTransactions($wallet_id, $limit, $tag);
+        }
+    }
+
+    /**
      * Send funds from wallet
      *
      * Example of allowed additional params:
