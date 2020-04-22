@@ -162,14 +162,21 @@ class AddressApiClient
      *
      * @param int $wallet_id
      * @param int $limit
+     * @param int|null $tag
      * @return array
      * @throws GuzzleException
      */
-    public function getWalletTransactions(int $wallet_id, int $limit = 100): array
+    public function getWalletTransactions(int $wallet_id, int $limit = 100, ?int $tag = null): array
     {
         $params = [
             'limit' => $limit
         ];
+
+        if ($tag) {
+            $params = array_merge($params, [
+                'tag' => $tag
+            ]);
+        }
 
         return $this->request('GET', $this->makeUrl('wallet', 'transactions', $wallet_id), $params);
     }
