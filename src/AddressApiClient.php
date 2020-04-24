@@ -455,7 +455,15 @@ class AddressApiClient
     private function request(string $method, string $url, array $params = [], bool $sign = false): array
     {
         try {
-            $query['form_params'] = $params;
+            switch ($method) {
+                case 'GET':
+                    $query['query'] = $params;
+                    break;
+                case 'POST':
+                    $query['form_params'] = $params;
+                    break;
+            }
+
             $query['headers']['X-Api-Token'] = $this->api_token;
 
             if ($sign) {
