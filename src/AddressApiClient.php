@@ -237,12 +237,17 @@ class AddressApiClient
      * Get all accounts by wallet id
      *
      * @param int $wallet_id
+     * @param int $limit
      * @return array
      * @throws GuzzleException
      */
-    public function getAccounts(int $wallet_id): array
+    public function getAccounts(int $wallet_id, int $limit = 3000): array
     {
-        return $this->request('GET', $this->makeUrl('account', 'all', $wallet_id));
+        $params = [
+            'limit' => $limit
+        ];
+
+        return $this->request('GET', $this->makeUrl('account', 'all', $wallet_id), $params);
     }
 
     /**
