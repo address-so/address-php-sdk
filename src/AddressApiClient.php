@@ -397,6 +397,41 @@ class AddressApiClient
     }
 
     /**
+     * @param int $wallet_id
+     * @param float $amount
+     * @param int $feePriority
+     * @return array
+     * @throws GuzzleException
+     */
+    public function getWalletFee(int $wallet_id, float $amount, int $feePriority = 1): array
+    {
+        $params = [
+            'amount' => $amount,
+            'fee_priority' => $feePriority
+        ];
+
+        return $this->request('POST', $this->makeUrl('wallet', 'fee', $wallet_id), $params);
+    }
+
+    /**
+     * @param int $wallet_id
+     * @param int $account_id
+     * @param float $amount
+     * @param int $feePriority
+     * @return array
+     * @throws GuzzleException
+     */
+    public function getAccountFee(int $wallet_id, int $account_id, float $amount, int $feePriority = 1): array
+    {
+        $params = [
+            'amount' => $amount,
+            'fee_priority' => $feePriority
+        ];
+
+        return $this->request('POST', $this->makeUrl('account', 'fee', $wallet_id, $account_id), $params);
+    }
+
+    /**
      * Make url for request
      *
      * @param string $type
@@ -417,6 +452,7 @@ class AddressApiClient
         $send = 'send/';
         $permissions = 'permissions/';
         $archive = 'archive/';
+        $fee = 'estimate_fee/';
 
         $urls = [
             'coins' => [
@@ -432,6 +468,7 @@ class AddressApiClient
                 'send' => $coin . $wallets . $wallet . $send,
                 'permissions' => $coin . $wallets . $wallet . $permissions,
                 'transactions' => $coin . $wallets . $wallet . $transactions,
+                'fee' => $coin . $wallets. $wallet . $fee
             ],
             'account' => [
                 'all' => $coin . $wallets . $wallet . $accounts,
@@ -441,6 +478,7 @@ class AddressApiClient
                 'archive' => $coin . $wallets . $wallet . $accounts . $archive,
                 'send' => $coin . $wallets . $wallet . $accounts . $account . $send,
                 'transactions' => $coin . $wallets . $wallet . $accounts . $account . $transactions,
+                'fee' => $coin . $wallets. $wallet . $accounts . $account . $fee
             ],
         ];
 
