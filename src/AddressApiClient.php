@@ -192,6 +192,44 @@ class AddressApiClient
     }
 
     /**
+     * @param int $wallet_id
+     * @param float $amount
+     * @param int|null $period
+     * @return array
+     * @throws GuzzleException
+     */
+    public function createWalletLimit(int $wallet_id, float $amount, ?int $period = null): array
+    {
+        return $this->request('POST', $this->makeUrl('wallet', 'limits', $wallet_id), [
+            'amount' => $amount,
+            'period' => $period
+        ]);
+    }
+
+    /**
+     * @param int $limit_id
+     * @param float $amount
+     * @return array
+     * @throws GuzzleException
+     */
+    public function updateLimit(int $limit_id, float $amount): array
+    {
+        return $this->request('POST', '/limits/' . $limit_id, [
+            'amount' => $amount
+        ]);
+    }
+
+    /**
+     * @param int $limit_id
+     * @return array
+     * @throws GuzzleException
+     */
+    public function deleteLimit(int $limit_id): array
+    {
+        return $this->request('DELETE', '/limits/' . $limit_id);
+    }
+
+    /**
      * Get all transactions
      *
      * @param int $wallet_id
@@ -491,7 +529,7 @@ class AddressApiClient
                 'send' => $coin . $wallets . $wallet . $accounts . $account . $send,
                 'transactions' => $coin . $wallets . $wallet . $accounts . $account . $transactions,
                 'fee' => $coin . $wallets. $wallet . $accounts . $account . $fee
-            ],
+            ]
         ];
 
         return $urls[$type][$method];
