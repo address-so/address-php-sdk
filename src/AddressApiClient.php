@@ -182,6 +182,16 @@ class AddressApiClient
     }
 
     /**
+     * @param int $wallet_id
+     * @return array
+     * @throws GuzzleException
+     */
+    public function getWalletLimits(int $wallet_id): array
+    {
+        return $this->request('GET', $this->makeUrl('wallet', 'limits', $wallet_id));
+    }
+
+    /**
      * Get all transactions
      *
      * @param int $wallet_id
@@ -451,6 +461,7 @@ class AddressApiClient
         $transactions = 'transactions/';
         $send = 'send/';
         $permissions = 'permissions/';
+        $limits = 'limits/';
         $archive = 'archive/';
         $fee = 'estimate_fee/';
 
@@ -468,6 +479,7 @@ class AddressApiClient
                 'send' => $coin . $wallets . $wallet . $send,
                 'permissions' => $coin . $wallets . $wallet . $permissions,
                 'transactions' => $coin . $wallets . $wallet . $transactions,
+                'limits' => $wallets . $wallet . $limits,
                 'fee' => $coin . $wallets. $wallet . $fee
             ],
             'account' => [
