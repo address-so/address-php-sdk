@@ -485,7 +485,7 @@ class AddressApiClient
      */
     public function getDepositAddress(): array
     {
-        return $this->request('GET', 'invoices/deposit/');
+        return $this->request('GET', 'invoice/deposit/');
     }
 
     /**
