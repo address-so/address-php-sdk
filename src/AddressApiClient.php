@@ -432,6 +432,15 @@ class AddressApiClient
     }
 
     /**
+     * @return array
+     * @throws GuzzleException
+     */
+    public function getDepositAddress(): array
+    {
+        return $this->request('GET', 'invoices/deposit/');
+    }
+
+    /**
      * Make url for request
      *
      * @param string $type
